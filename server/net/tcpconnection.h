@@ -9,7 +9,7 @@
 namespace net{
     class TcpConnection{
     public:
-        using MessageProcessor = std::function<void(TcpConnection*, base::Buffer*)>;
+        using MessageProcessor = std::function<void(TcpConnection*, std::shared_ptr<base::CircleReadBuffer>)>;
         using ConnectionCallBack = std::function<void(const TcpConnection*)>;
         using CloseCallBack = std::function<void(TcpConnection*)>;
         TcpConnection(const std::string& name, int fd, Channel* channel, std::thread::id id): _fd(fd),

@@ -4,11 +4,13 @@
 #include <string>
 #include <algorithm>
 #include <assert.h>
+#include <unistd.h>
+
 namespace base{
     class Buffer{
         using DataType = std::vector<char>;
         public:
-            Buffer(int capacity = 1024): _data(capacity),
+            Buffer(int capacity = 3072): _data(capacity),
                                      _capacity(capacity),
                                      _size(0),
                                      _writeidx(0),
@@ -32,34 +34,39 @@ namespace base{
                 _readidx = 0;
             }
             int find(const std::string&) const;
-            int readFromFd(int);
-            int writeToFd(int);
+            virtual int readFromFd(int);
+            virtual int writeToFd(int);
             const int size() const;
             void swap(Buffer&);
             const int capacity() const;
-            const int freeSize() const;
-            const int byteToWrite() const;
-            const int byteToRead() const;
+            virtual const int freeSize() const;
+            virtual const int byteToWrite() const;
+            virtual const int byteToRead() const;
             const char& operator[](int) const;
             char& operator[](int);
-            void append(char*, int);
-            void append(const std::string&);
-            void append(std::string&&);
-            void append(const Buffer&);
+            virtual void append(const char*, int);
+            virtual void append(const std::string&);
+            virtual void append(std::string&&);
+            virtual void append(const Buffer&);
             void push_back(char);
             void clear();
             std::string getNAsString(int);
             std::string getAllAsString();
-        private:
+            
+            
             bool writable(int);
-            DataType::iterator begin();
-            DataType::iterator end();
+            
+            int _size; 
             DataType::const_iterator begin() const;
-            DataType::const_iterator end() const;
-            DataType _data;
+            DataType::const_iterator end() const;  
+            DataType::iterator begin();   
+            DataType::iterator end();
+            virtual int find_first_of(const std::string pattern, int start)const{
+                return -1;
+            }
             int _capacity;
-            int _size;
             int _writeidx;
             int _readidx;
+            DataType _data;
     };
 }

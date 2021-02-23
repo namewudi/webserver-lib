@@ -21,8 +21,8 @@ namespace net{
         _fd = eventFd;
     }
     void Channel::clear(){
-        _inputBuffer.clear();
-        _outputBuffer.clear();
+        _inputBuffer->clear();
+        _outputBuffer->clear();
         _beingMonitored = 0;
         _fd = -1;
         _readCallBack = nullptr;
@@ -83,10 +83,10 @@ namespace net{
             if(_writeCallBack) _writeCallBack();
         }
     }
-    base::Buffer* Channel::inputBuffer(){
-        return &_inputBuffer;
+    std::shared_ptr<base::CircleReadBuffer> Channel::inputBuffer(){
+        return _inputBuffer;
     }
-    base::Buffer* Channel::outputBuffer(){
-        return &_outputBuffer;
+    std::shared_ptr<base::CircleWriteBuffer> Channel::outputBuffer(){
+        return _outputBuffer;
     }
 }

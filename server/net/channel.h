@@ -7,6 +7,8 @@
 #include "poller.h"
 #include <boost/noncopyable.hpp>
 #include "../base/buffer.h"
+#include "../base/circleReadBuffer.h"
+#include "../base/circleWriteBuffer.h"
 namespace net{
     class Poller;
     class Channel: private boost::noncopyable{
@@ -15,7 +17,9 @@ namespace net{
     public:
         Channel(std::shared_ptr<Poller> poller) : _owner(poller),
                                                   _unused(1),
-                                                  _beingMonitored(0){};
+                                                  _beingMonitored(0),
+                                                  _inputBuffer(std::make_shared<base::CircleReadBuffer>()),
+                                                  _outputBuffer(std::make_shared<base::CircleWriteBuffer>()){};
         void setReadCallBack(EventCallBack);
         void setWriteCallBack(EventCallBack);
         void setCloseCallBack(EventCallBack);
@@ -33,8 +37,8 @@ namespace net{
         ~Channel(){
             close(_fd);
         }
-        base::Buffer* inputBuffer();
-        base::Buffer* outputBuffer();
+        std::shared_ptr<base::CircleReadBuffer> inputBuffer();
+        std::shared_ptr<base::CircleWriteBuffer> outputBuffer();
     private:
         void clear();
         std::shared_ptr<Poller> _owner;
@@ -50,8 +54,8 @@ namespace net{
         EventCallBack _writeCallBack;
         EventCallBack _closeCallBack;
         EventCallBack _errorCallBack;
-        base::Buffer _inputBuffer;
-        base::Buffer _outputBuffer;
+        std::shared_ptr<base::CircleReadBuffer> _inputBuffer;
+        std::shared_ptr<base::CircleWriteBuffer> _outputBuffer;
         std::mutex _mutex;
     };
 }

@@ -2,7 +2,7 @@
 
 namespace net{
     void TcpConnection::handleRead(){
-        base::Buffer* inputBuffer = _channel->inputBuffer();
+        std::shared_ptr<base::CircleReadBuffer> inputBuffer = _channel->inputBuffer();
         if(inputBuffer->readFromFd(_channel->fd()) > 0){
             _channel->removeFromPoller();
             if(_messageProcessor) {
@@ -14,10 +14,14 @@ namespace net{
         }
     }
     void TcpConnection::handleWrite(){
-        base::Buffer* outputBuffer = _channel->outputBuffer();
+        std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
+        std::cerr<<"start handle write!"<<std::endl;
         outputBuffer->writeToFd(_channel->fd());
-        _channel->removeFromPoller();
-        _channel->addToPoller(EPOLLIN);
+        if(outputBuffer->byteToWrite() == 0){
+            _channel->removeFromPoller();
+            _channel->addToPoller(EPOLLIN);
+        }
+        
     }
     void TcpConnection::handleClose(){
         _channel->destroy();
@@ -27,7 +31,7 @@ namespace net{
 
     }
     void TcpConnection::send(std::string s){
-        base::Buffer* outputBuffer = _channel->outputBuffer();
+        std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
         outputBuffer->append(s);
     }
     void TcpConnection::finishSend(){

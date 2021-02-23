@@ -1,6 +1,5 @@
 #include "buffer.h"
-#include <unistd.h>
-#include <assert.h>
+
 namespace base{
     const int Buffer::capacity() const{
         return _capacity;
@@ -14,6 +13,7 @@ namespace base{
     const int Buffer::byteToWrite() const{
         return size() - _writeidx;
     }
+    
     const int Buffer::byteToRead() const{
         return size() - _readidx;
     }
@@ -24,14 +24,16 @@ namespace base{
         //std::cout<<"toc"<<std::endl;
         if(n <= 0) return 0;
 
-        std::cout<<"start read. fd = "<<fd;
+        std::cout<<"start read. fd = "<<fd<<std::endl;
+        std::cout<<"current size: "<<size();
         std::cout<<" Byte : "<<n<<std::endl;
-        std::cout<<"data: ";
-        for(int i = 0; i < n; i++){
-            std::cout<<_data[size() + i];
-        }
-        std::cout<<std::endl;
+        std::cout<<"data: "<<std::endl;
+        int curSize = size();
         _size += n;
+        for(int i = 0; i < n; i++){
+            std::cout<<_data[curSize + i];
+        }
+        std::cout<<std::endl<<"read complete!"<<std::endl;
         return n;
     }
     int Buffer::writeToFd(int fd){
@@ -41,8 +43,8 @@ namespace base{
         }
         
         int n = write(fd, &_data[0] + _writeidx, byteToWrite());
-        std::cout<<"start write. fd = "<<fd<<" Byte : " <<byteToWrite()<<std::endl;
-        std::cout<<"data: ";
+        std::cout<<"start write. fd = "<<fd<<" Byte : " <<byteToWrite()<<"write index :"<<_writeidx<<std::endl;
+        std::cout<<"data: "<<std::endl;
         for(int i = 0; i < n; i++){
             std::cout<<_data[_writeidx + i];
         }
@@ -50,6 +52,7 @@ namespace base{
         _writeidx += n;
         return n;
     }
+
     void Buffer::swap(Buffer& buffer){
         std::swap(buffer._data, _data);
         std::swap(buffer._size, _size);
@@ -58,13 +61,17 @@ namespace base{
     bool Buffer::writable(int len){
         return freeSize() >= len;
     }
-    void Buffer::append(char* buffer, int len){
+    void Buffer::append(const char* buffer, int len){
         assert(writable(len));
         std::copy(buffer, buffer + len, end());
         _size += len;
     }
     void Buffer::append(const std::string& s){
-        assert(writable(s.size()));
+        if(!writable(s.size())){
+            std::cerr<<"free size: "<<freeSize()<<std::endl;
+            assert(writable(s.size()));
+        }
+        
         std::copy(s.begin(), s.end(), end());
         _size += s.size();
     }
@@ -72,6 +79,14 @@ namespace base{
         assert(writable(buffer.size()));
         std::copy(buffer.begin(), buffer.end(), end());
         _size += buffer.size();
+    }
+    void Buffer::append(std::string&& s){
+        if(!writable(s.size())){
+            std::cerr<<"free size: "<<freeSize()<<std::endl;
+            assert(writable(s.size()));
+        }
+        std::copy(s.begin(), s.end(), end());
+        _size += s.size();
     }
     char& Buffer::operator[](int idx){
         return const_cast<char&>(static_cast<const Buffer&>(*this)[idx]);

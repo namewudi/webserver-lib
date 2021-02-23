@@ -10,9 +10,16 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pthread" )
 add_executable(testBuffer ./server/base/buffer.cpp ./server/base/test/testBuffer.cpp)
 aux_source_directory(server/base/ SRC_BASE)
 aux_source_directory(server/net/ SRC_NET)
+aux_source_directory(server/exception/ SRC_EXCPT)
 
-add_executable(tcpServer ${SRC_BASE} ${SRC_NET} server/net/test/testTcpServer)
-add_executable(httpServer ${SRC_BASE} ${SRC_NET} server/net/test/testHttpServer)
+aux_source_directory(server/net/utils/ SRC_UTILS)
+aux_source_directory(server/net/httpRequest/ SRC_REQ)
+
+aux_source_directory(application/src/controller/ SRC_CRL)
+
+#add_executable(tcpServer ${SRC_BASE} ${SRC_NET}   server/net/test/testTcpServer)
+#add_executable(httpServer ${SRC_BASE} ${SRC_NET} ${SRC_UTILS} ${SRC_REQ} ${SRC_EXCPT} server/net/test/testHttpServer)
+add_executable(httpApplication ${SRC_BASE} ${SRC_NET} ${SRC_UTILS} ${SRC_REQ} ${SRC_EXCPT} ${SRC_CRL} application/src/controller/testApplication)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

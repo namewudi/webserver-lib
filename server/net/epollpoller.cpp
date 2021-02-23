@@ -26,6 +26,7 @@ namespace net{
         return  event & EPOLLERR; //修改
     }
     bool EpollPoller::removeChannel(int fd){
+        std::cerr<<"remove from poller"<<std::endl;
         epoll_event temp = {0, {0}};
         temp.data.ptr = nullptr;
         if(epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, &temp) < 0) {
