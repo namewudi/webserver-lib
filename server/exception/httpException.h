@@ -2,9 +2,19 @@
 #include <exception>
 namespace exception{
     class HttpException: public std::exception{
-        const char* what() const noexcept override{
-            return "Http error!";
+    public:
+        HttpException(){};
+        HttpException(const std::string& msg){
+            this->msg = msg;
         }
+        HttpException(std::string&& msg){
+            this->msg = std::move(msg);
+        }
+        const char* what() const noexcept override{
+            return msg.c_str();
+        }
+    private:
+        std::string msg;
     };
     class HttpVersionException: public HttpException{
         const char* what() const noexcept override{

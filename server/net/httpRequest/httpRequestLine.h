@@ -37,6 +37,9 @@ namespace net{
             }
             return "";
         }
+        void setMethod(HttpMethod method){
+            this->httpmethod = method;
+        }
         void setParameter(std::string key, std::string value){
             this->parameterMap[key] = value;
         }

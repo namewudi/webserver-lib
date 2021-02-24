@@ -15,10 +15,21 @@ namespace net{
     }
 
     const std::string HttpRequest::getParameters()const{
-        return httpRequestLine->getParametersAsString();
+        if(getMethod() == HttpMethod::GET){
+            return httpRequestLine->getParametersAsString();
+        }
+        else{
+            return httpRequestBody->getParametersAsString();
+        }
+        
     }
 
     const std::string HttpRequest::getParameter(const std::string& key){
-        return httpRequestLine->getParameter(key);
+        if(getMethod() == HttpMethod::GET){
+            return httpRequestLine->getParameter(key);
+        }
+        else{
+            return httpRequestBody->getParameter(key);
+        }
     }
 }

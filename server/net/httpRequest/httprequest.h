@@ -51,14 +51,14 @@ namespace net{
             }
         }
         const std::string getParameter(const std::string&);
-        void setRequestLine(std::shared_ptr<HttpRequestLine> httpRequestLine){
-            this->httpRequestLine = httpRequestLine;
+        std::shared_ptr<HttpRequestLine> getRequestLine(){
+            return this->httpRequestLine;
         }
-        void setRequestHeader(std::shared_ptr<HttpRequestHeader> httpRequestHeader){
-            this->httpRequestHeader = httpRequestHeader;
+        std::shared_ptr<HttpRequestHeader> getRequestHeader(){
+            return this->httpRequestHeader;
         }
-        void setRequestBody(std::shared_ptr<HttpRequestBody> httpRequestBody){
-            this->httpRequestBody = httpRequestBody;
+        std::shared_ptr<HttpRequestBody> getRequestBody(){
+            return this->httpRequestBody;
         }
     private:
         std::shared_ptr<HttpRequestBody> httpRequestBody;
