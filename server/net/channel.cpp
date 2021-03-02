@@ -8,7 +8,7 @@ namespace net{
         return _unused;
     }
     void Channel::updateEventType(int eventType){
-        _event = eventType;
+        _event = _event | eventType; // fix me
     }
     void Channel::destroy(){
         removeFromPoller();
@@ -50,13 +50,14 @@ namespace net{
         return _event;
     }
     void Channel::addToPoller(int eventType){
+        std::cerr<<"修改监听类型:"<<eventType<<std::endl;
         std::lock_guard<std::mutex> lg(_mutex);
         if(!Monitored()){
             assert(_owner->addChannel(this, _fd, eventType));
             _beingMonitored = 1;
         }
         else{
-            assert(_owner->modChannel(this, _fd, eventType));
+            assert(_owner->modChannel(this, _fd, eventType)); //fix me
         }
         updateEventType(eventType);
     }
@@ -69,17 +70,21 @@ namespace net{
         }
     }
     void Channel::doTask(){
-        int event = eventType();
+        //int event = eventType();
+        int event = getTrigeredEvent();
         if(_owner->isCloseEvent(event)){
+            
             if(_closeCallBack) _closeCallBack();
         }
-        else if(_owner->isErrorEvent(event)){
+        if(_owner->isErrorEvent(event)){
             if(_errorCallBack) _errorCallBack();
         }
-        else if(_owner->isInEvent(event)){
+        if(_owner->isInEvent(event)){
+            std::cerr<<"读事件触发"<<std::endl;
             if(_readCallBack) _readCallBack();
         }
-        else if(_owner->isOutEvent(event)){
+        if(_owner->isOutEvent(event)){
+            std::cerr<<"写事件触发"<<std::endl;
             if(_writeCallBack) _writeCallBack();
         }
     }

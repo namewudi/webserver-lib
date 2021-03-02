@@ -20,8 +20,13 @@ namespace net{
                 HttpUtils::parseRequest(b, req);
                 std::shared_ptr<HttpResponse> resp = std::make_shared<HttpResponse>();
                 this->_servletManager->handle(req, resp);
-                a->send(resp->getAsString());
-                a->finishSend();
+                //a->send(resp->getAsString());
+                //a->finishSend();
+                a->sendInfinite(resp->getAsString());//大文件传输
+                if(req->getHeader("Connection") != "keep-alive"){
+                    a->handleClose();
+                }
+                a->finishMessageProcss();
                 std::cerr<<"message processing : end!"<<std::endl;
             });
         }

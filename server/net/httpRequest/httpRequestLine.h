@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <unordered_map>
 namespace net{
@@ -36,6 +37,9 @@ namespace net{
                 return parameterMap[key];
             }
             return "";
+        }
+        bool hasParameter(const std::string key){
+            return parameterMap.count(key) > 0;
         }
         void setMethod(HttpMethod method){
             this->httpmethod = method;

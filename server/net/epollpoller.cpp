@@ -9,6 +9,8 @@ namespace net{
         if(nfd > 0){
             for(int i = 0; i < nfd; i++){
                 activeChannels[i] = static_cast<Channel*>(_activeEvents[i].data.ptr);
+                activeChannels[i]->setTrigeredEvent(_activeEvents[i].events);
+                std::cerr<<"epoll触发了: "<<_activeEvents[i].events<<std::endl;
             }
         }
 

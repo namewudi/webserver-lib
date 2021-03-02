@@ -6,7 +6,7 @@ namespace base{
     public:
         using DataType = std::vector<char>;
 
-        CircleBuffer(int capacity = 3072): _data(capacity),
+        CircleBuffer(int capacity = 30720): _data(capacity),
                                      _capacity(capacity),
                                      _size(0),
                                      _index(0){}

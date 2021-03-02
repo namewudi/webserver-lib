@@ -67,7 +67,7 @@ namespace base{
             return std::string(_data.begin() + begin, _data.begin() + end);
         }
         else if(begin > end){
-            return std::string(_data.begin() + begin, _data.end()) + std::string(_data.begin(), _data.begin() + begin);
+            return std::string(_data.begin() + begin, _data.end()) + std::string(_data.begin(), _data.begin() + end);
         }
         return "";
     }

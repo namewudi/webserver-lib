@@ -3,13 +3,16 @@
 namespace net{
     void TcpConnection::handleRead(){
         std::shared_ptr<base::CircleReadBuffer> inputBuffer = _channel->inputBuffer();
-        if(inputBuffer->readFromFd(_channel->fd()) > 0){
-            _channel->removeFromPoller();
-            if(_messageProcessor) {
+        if(inputBuffer->readFromFd(_channel->fd()) != 0){
+            //_channel->removeFromPoller();
+            if(_messageProcessor != nullptr) {//同时读取多个请求将引发并发问题 fix me
+                if(messageProcssing()) return;
+                this->startMessageProcss();
                 base::ThreadPoolSingleton::get().execute([this](){_messageProcessor(this, _channel->inputBuffer());});
             }
         }
         else {
+            std::cerr<<"读不到内容!"<<std::endl;
             handleClose();
         }
     }
@@ -17,11 +20,14 @@ namespace net{
         std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
         std::cerr<<"start handle write!"<<std::endl;
         outputBuffer->writeToFd(_channel->fd());
-        if(outputBuffer->byteToWrite() == 0){
+        // if(outputBuffer->byteToWrite() == 0){
+        //     _channel->removeFromPoller();
+        //     _channel->addToPoller(EPOLLIN);
+        // }
+        if(outputBuffer->remainTaskLength() == 0){
             _channel->removeFromPoller();
             _channel->addToPoller(EPOLLIN);
         }
-        
     }
     void TcpConnection::handleClose(){
         _channel->destroy();
@@ -34,8 +40,14 @@ namespace net{
         std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
         outputBuffer->append(s);
     }
+    void TcpConnection::sendInfinite(std::string s){
+        std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
+        outputBuffer->addTaskLength(s.length());
+        _channel->addToPoller(EPOLLOUT | EPOLLIN); //fix me
+        outputBuffer->appendInfinite(&s.front(), s.size());
+    }
     void TcpConnection::finishSend(){
-        _channel->addToPoller(EPOLLOUT);
+        _channel->addToPoller(EPOLLOUT | EPOLLIN); //fix me
     }
     void TcpConnection::setConnectionCallBack(ConnectionCallBack cb){
         _connectionCallBack = std::move(cb);

@@ -15,7 +15,8 @@ namespace net{
         TcpConnection(const std::string& name, int fd, Channel* channel, std::thread::id id): _fd(fd),
                                                                           _channel(channel),
                                                                           _name(name),
-                                                                          _ownerThreadID(id){
+                                                                          _ownerThreadID(id),
+                                                                          _messageProcssing(false){                                                                    
             assert(channel->isFree());
             channel->bind(fd);
             channel->setReadCallBack(std::bind(&TcpConnection::handleRead, this));
@@ -24,14 +25,25 @@ namespace net{
             channel->setErrorCallBack(std::bind(&TcpConnection::handleError, this));
         }
         ~TcpConnection(){
+            _channel->destroy();
             std::cout<<"close connection. fd = "<<_fd<<std::endl;
         }
         void enable();
         void send(std::string);
+        void sendInfinite(std::string);
         void setConnectionCallBack(ConnectionCallBack);
         void setMessageProcessor(MessageProcessor);
         void setCloseCallBack(CloseCallBack);
         const std::string name()const;
+        void startMessageProcss(){
+            _messageProcssing = true;
+        }
+        void finishMessageProcss(){
+            _messageProcssing = false;
+        }
+        bool messageProcssing(){
+            return _messageProcssing;
+        }
         void handleRead();
         void handleWrite();
         void handleClose();
@@ -44,6 +56,7 @@ namespace net{
         const std::thread::id _ownerThreadID;
         ConnectionCallBack _connectionCallBack;
         MessageProcessor _messageProcessor;
+        bool _messageProcssing;
         CloseCallBack _closeCallBack;
         Channel* _channel;
         const std::string _name;

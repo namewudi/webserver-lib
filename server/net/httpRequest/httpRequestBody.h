@@ -14,6 +14,9 @@ namespace net{
             }
             return "";
         }
+        bool hasParameter(const std::string key){
+            return parameterMap.count(key) > 0;
+        }
         void setContentType(const std::string& type){
             if(type == "application/x-www-form-urlencoded"){
                 this->contentType = ContentType::application_x_www_form_urlencoded;

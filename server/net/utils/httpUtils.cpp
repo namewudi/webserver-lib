@@ -25,7 +25,7 @@ namespace net{
         do{
             switch (curStatus){
                 case Status::init:
-                    std::cerr<<"start parse request line!"<<std::endl;
+                    //std::cerr<<"start parse request line!"<<std::endl;
                     targetIndex  = data->find_first_of(start, finish, CRLFPattern);
                     if(targetIndex != -1){ 
                         req->setStatus(parseRequestLine(data, start, targetIndex, req->getRequestLine()));
@@ -33,7 +33,7 @@ namespace net{
                         curStatus = req->getStatus();
                     }
                     else {
-                        std::cerr<<"data incomplete!"<<std::endl;
+                        //std::cerr<<"data incomplete!"<<std::endl;
                         curStatus = Status::init;
                         break;
                     }
@@ -66,7 +66,7 @@ namespace net{
                         }
                     }
                 case Status::headerComplete:
-                    std::cerr<<"start parse body!"<<std::endl;
+                    //std::cerr<<"start parse body!"<<std::endl;
                     switch (req->getMethod())
                     {
                     case HttpMethod::GET:
@@ -96,15 +96,18 @@ namespace net{
                         }
                         
                         bodyCanRead = std::min(data->byteToRead(), bodyLength - receivedBody);
+                        //std::cerr<<"bodyCanRead: "<<bodyCanRead<<std::endl;
                         if(bodyCanRead == 0){
                             curStatus == Status::headerComplete;
                             break;
                         }
+                        std::cerr<<"新加入body的数据为"<<data->getString(data->modifyIndex(start + receivedBody), data->modifyIndex(start + receivedBody + bodyCanRead))<<std::endl;
                         req->getRequestBody()->append(data->getString(data->modifyIndex(start + receivedBody), data->modifyIndex(start + receivedBody + bodyCanRead)));
                         receivedBody += bodyCanRead;
+                        data->setIndex(data->modifyIndex(start + receivedBody));
                         if(bodyLength == receivedBody) {
                             req->setStatus(parseRequestBody(req->getRequestBody()));
-                            data->setIndex(data->modifyIndex(start + receivedBody));
+                            
                             curStatus = req->getStatus();
                             break;
                         }

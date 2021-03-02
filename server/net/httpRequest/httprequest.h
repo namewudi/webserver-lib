@@ -51,6 +51,7 @@ namespace net{
             }
         }
         const std::string getParameter(const std::string&);
+        bool hasParameter(const std::string&);
         std::shared_ptr<HttpRequestLine> getRequestLine(){
             return this->httpRequestLine;
         }

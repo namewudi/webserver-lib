@@ -33,6 +33,12 @@ namespace net{
         bool Monitored()const;
         void updateEventType(int);
         const int eventType();
+        const int getTrigeredEvent()const{
+            return _trigeredEvent;
+        }
+        void setTrigeredEvent(int event){
+            _trigeredEvent = event;;
+        }
         bool isFree();
         ~Channel(){
             close(_fd);
@@ -44,6 +50,7 @@ namespace net{
         std::shared_ptr<Poller> _owner;
         bool _unused;
         int _event;
+        int _trigeredEvent;
         int _fd;
         bool _beingMonitored;
         //EventNotifier _InEvent;
