@@ -12,6 +12,7 @@ namespace base{
             return 0;
         }
         int n = 0;
+        
         std::cout<<"start write. fd = "<<fd<<" Byte = " <<byteToWrite()<<" start index = "<<_index<<std::endl;
         if(byteToWrite() > capacity() - _index){
             n = write(fd, &_data[_index], capacity() - _index);   
@@ -26,6 +27,7 @@ namespace base{
         }
         std::cout<<std::endl<<"*****************************************************"<<std::endl;
         */
+        std::lock_guard<std::mutex> guarded(_mutex);
         _index += n;
         _taskLength -= n;
         std::cerr<<"after write. remain task length: "<<_taskLength<<std::endl;

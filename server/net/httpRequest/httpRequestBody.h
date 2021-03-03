@@ -21,8 +21,9 @@ namespace net{
             if(type == "application/x-www-form-urlencoded"){
                 this->contentType = ContentType::application_x_www_form_urlencoded;
             }
-            else{
-                throw exception::HttpException("未知Content-Type类型");
+            else if(type.substr(0, std::string("multipart/form-data").length()) == "multipart/form-data"){
+                //fix me
+                //throw exception::HttpException("未知Content-Type类型");
             }
             
         }

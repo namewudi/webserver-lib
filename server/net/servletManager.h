@@ -45,11 +45,12 @@ namespace net{
                 servlets[req->getUrl()]->doGet(req, resp);
                 break;
             case HttpMethod::POST:
-                servlets[req->getUrl()]->doPost(req, resp);
+                servlets[req->getUrl()]->doPost(req, resp); 
                 break;
             default:
                 break;
             }
+            resp->addHeader("Content-Length", std::to_string(resp->getContentLength()));
             return true;
         }
         void handle(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp){
