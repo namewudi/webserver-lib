@@ -7,8 +7,8 @@ namespace base{
 
     int CircleWriteBuffer::writeToFd(int fd){
         if(byteToWrite() <= 0) {
-            std::cerr<<"remain task length: "<<_taskLength<<std::endl;
-            std::cout<<"write failed. fd = "<<fd<<" Byte : " <<byteToWrite()<<std::endl;
+            //std::cerr<<"remain task length: "<<_taskLength<<std::endl;
+            //std::cout<<"write failed. fd = "<<fd<<" Byte : " <<byteToWrite()<<std::endl;
             return 0;
         }
         int n = 0;

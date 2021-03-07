@@ -20,6 +20,7 @@ namespace net{
         static HttpVersion parseVersion(std::string);
         static void parseParameter(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end, std::function<void(const std::string&, const std::string&)>);
         static void parseParameter(const std::string& data, std::function<void(const std::string&, const std::string&)>);
+        static void parseMultiParameter(const std::string& data, std::shared_ptr<HttpRequestBody>);
         static HttpMethod parseMethod(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end);
         static Status parseRequestHeader(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end, std::shared_ptr<HttpRequest> req);
         static Status parseRequestBody(std::shared_ptr<HttpRequestBody> reqBody);

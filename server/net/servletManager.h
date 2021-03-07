@@ -7,7 +7,7 @@
 namespace net{
     class ServletManager{
     public:
-        ServletManager():staticResourcePath("/home/wudi/develop/myBlog/application/resources/static"){
+        ServletManager():staticResourcePath("/home/amax/wudi/develop/myBlog/application/resources/static"){
             
         }
         void regist(std::shared_ptr<Servlet> servlet){

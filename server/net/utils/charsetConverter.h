@@ -7,6 +7,7 @@ namespace net{
     static std::string Encode(const std::string&);
     static std::string urlToUtf8(const std::string&);
     static std::string urlToUtf8(std::vector<char>::const_iterator, std::vector<char>::const_iterator);
+    static char costumConverter(char);
     private:
         static const std::string & HEX_2_NUM_MAP();
         static const std::string & ASCII_EXCEPTION();

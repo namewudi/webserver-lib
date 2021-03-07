@@ -52,7 +52,7 @@ namespace net{
                 iter += 2;
             }
             else{
-                ret.push_back(*iter);
+                ret.push_back(costumConverter(*iter));
             }
         }
         return ret;
@@ -70,9 +70,15 @@ namespace net{
                 iter += 2;
             }
             else{
-                ret.push_back(*iter);
+                ret.push_back(costumConverter(*iter));
             }
         }
         return ret;
+    }
+    char CharsetConverter::costumConverter(char c){
+        if(c == '+') {
+            return ' ';
+        }
+        return c;
     }
 }

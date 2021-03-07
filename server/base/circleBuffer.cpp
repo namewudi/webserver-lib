@@ -29,7 +29,7 @@ namespace base{
         }
         return index;
     }
-    int CircleBuffer::find_first_of(int start, int end, const std::string pattern)const{
+    int CircleBuffer::find(int start, int end, const std::string pattern)const{
         int m = pattern.size();
         if(start > end){
             int j = 0;

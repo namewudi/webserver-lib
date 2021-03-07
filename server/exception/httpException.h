@@ -13,17 +13,22 @@ namespace exception{
         const char* what() const noexcept override{
             return msg.c_str();
         }
-    private:
         std::string msg;
     };
     class HttpVersionException: public HttpException{
+    public:
         const char* what() const noexcept override{
             return "can't parse Http version!";
         }
     };
     class HttpMethodException: public HttpException{
-        const char* what() const noexcept override{
-            return "can't parse Http method!";
+    public:
+        HttpMethodException(){};
+        HttpMethodException(const std::string& msg){
+            this->msg = msg;
+        }
+        HttpMethodException(std::string&& msg){
+            this->msg = std::move(msg);
         }
     };
 }

@@ -60,7 +60,6 @@ namespace net{
             addStatusMessage("OK");
             std::cerr<<"html file size: "<<str.size()<<std::endl;
             this->addHeader("Content-Length", std::to_string(str.size()));
-            this->addHeader("Content-Type", "text/html; charset=utf-8");
             _content.append(str);
             return true;
         }

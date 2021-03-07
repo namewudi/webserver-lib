@@ -17,6 +17,7 @@ namespace net{
         int start = data->getIndex();
         int finish = data->size();
         std::cerr<<"start parse request!"<<"from "<<start<<" to "<<finish<<std::endl;
+        std::cerr<<"row quest: "<<data->getString(start, finish)<<std::endl;
         int targetIndex = 0;
         int bodyLength = 0;
         int receivedBody = 0;
@@ -26,7 +27,7 @@ namespace net{
             switch (curStatus){
                 case Status::init:
                     //std::cerr<<"start parse request line!"<<std::endl;
-                    targetIndex  = data->find_first_of(start, finish, CRLFPattern);
+                    targetIndex  = data->find(start, finish, CRLFPattern);
                     if(targetIndex != -1){ 
                         req->setStatus(parseRequestLine(data, start, targetIndex, req->getRequestLine()));
                         data->setIndex(targetIndex); 
@@ -44,7 +45,7 @@ namespace net{
                 case Status::lineComplete:
                     std::cerr<<"start parse header!"<<std::endl;
                     while(true){
-                        targetIndex = data->find_first_of(start, finish, CRLFPattern);
+                        targetIndex = data->find(start, finish, CRLFPattern);
                         if(targetIndex != -1){
                             req->setStatus(parseRequestHeader(data, start, targetIndex, req));
                             curStatus = req->getStatus();
@@ -66,7 +67,7 @@ namespace net{
                         }
                     }
                 case Status::headerComplete:
-                    //std::cerr<<"start parse body!"<<std::endl;
+                    std::cerr<<"start parse body!"<<std::endl;
                     switch (req->getMethod())
                     {
                     case HttpMethod::GET:
@@ -125,7 +126,7 @@ namespace net{
     Status HttpUtils::parseRequestLine(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end, std::shared_ptr<HttpRequestLine> reqLine){
         
         int start = begin;
-        int targetIndex = data->find_first_of(begin, end, spacePattern);
+        int targetIndex = data->find(begin, end, spacePattern);
         if(targetIndex != -1) {
             reqLine->setMethod(parseMethod(data, begin, targetIndex));
             start = data->modifyIndex(targetIndex + 1);
@@ -134,12 +135,12 @@ namespace net{
             return Status::error;
         }
         std::cerr<<"start parse url!"<<std::endl;
-        targetIndex = data->find_first_of(start, end, parameterPattern);
+        targetIndex = data->find(start, end, parameterPattern);
         if(targetIndex != -1) {
             reqLine->setUrl(data->getString(start, targetIndex));
             std::cerr<<"parse url result: "<<reqLine->getUrl()<<std::endl;
             start = data->modifyIndex(targetIndex + 1);
-            targetIndex = data->find_first_of(start, end, spacePattern);
+            targetIndex = data->find(start, end, spacePattern);
             std::cerr<<"url contains parameter!"<<std::endl;
             if(targetIndex != -1) {
                 parseParameter(data, start, targetIndex, [&reqLine](const std::string& k, const std::string& v){reqLine->setParameter(k, v);});
@@ -151,7 +152,7 @@ namespace net{
         }
         else {
             std::cerr<<"url do not contains parameter!"<<std::endl;
-            targetIndex = data->find_first_of(start, end, spacePattern);
+            targetIndex = data->find(start, end, spacePattern);
             if(targetIndex != -1) {
                 reqLine->setUrl(data->getString(start, targetIndex));
                 std::cerr<<"parse url result: "<<reqLine->getUrl()<<std::endl;
@@ -189,47 +190,47 @@ namespace net{
     }
     void HttpUtils::parseParameter(const std::string& data, std::function<void(const std::string&, const std::string&)> setParam){
         std::cerr<<"start parse parameter!"<<std::endl;
-        std::cerr<<"row parameter is: "<<data<<std::endl;
-        std::string utf8Parameter = CharsetConverter::urlToUtf8(data);
-        
-        std::string::const_iterator begin = utf8Parameter.begin();
-        std::string::const_iterator end = utf8Parameter.end();
-        std::unordered_map<std::string, std::string> result;
-        int start = 0;
+        //std::cerr<<"row parameter is: "<<data<<std::endl;
+        size_t start = 0;
         while(true){
-            auto iter = std::find_first_of(begin + start, end, equalPattern.begin(), equalPattern.end());
-            if(iter == end){
+            size_t index = data.find(equalPattern, start);
+            if(index == std::string::npos){
                 break;
             }
-            std::string key(begin + start, iter);
-            start = iter - begin + 1;
-            iter = std::find_first_of(begin + start, end, andPattern.begin(), andPattern.end());
-            setParam(key, std::string(begin + start, iter));
-            start = iter - begin + 1;
-            if(iter == end) break;
+            std::string key(data.substr(start, index - start));
+            start = index + 1;
+            index = data.find(andPattern, start);
+            if(index == std::string::npos){
+                setParam(CharsetConverter::urlToUtf8(key), CharsetConverter::urlToUtf8(data.substr(start, data.length() - start)));
+                break;
+            }
+            else{
+                setParam(CharsetConverter::urlToUtf8(key), CharsetConverter::urlToUtf8(data.substr(start, index - start)));
+            }
+            start = index + 1;
         }
         std::cerr<<"parse parameter finished!"<<std::endl;
     }
     HttpMethod HttpUtils::parseMethod(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end){
         std::cerr<<"start parse method!"<<std::endl;
         HttpMethod result;
-        if(data->find_first_of(begin, end, getPattern) != -1){
+        if(data->find(begin, end, getPattern) != -1){
             std::cerr<<"method :"<<"GET!"<<std::endl;
             result = HttpMethod::GET;
         }
-        else if(data->find_first_of(begin, end, postPattern) != -1){
+        else if(data->find(begin, end, postPattern) != -1){
             std::cerr<<"method :"<<"POST!"<<std::endl;
             result = HttpMethod::POST;
         }
         else {
-            throw exception::HttpMethodException();
+            throw exception::HttpMethodException(data->getString(begin, end).c_str());
         }
         std::cerr<<"parse method finished"<<std::endl;
         return result;
     }
     Status HttpUtils::parseRequestHeader(std::shared_ptr<base::CircleReadBuffer>& data, int begin, int end, std::shared_ptr<HttpRequest> req){
         if(begin == end) return Status::headerComplete;
-        int targetIndex = data->find_first_of(begin, end, colonPattern);
+        int targetIndex = data->find(begin, end, colonPattern);
         if(targetIndex == -1) return Status::error;
         req->setHeader(data->getString(begin, targetIndex), data->getString(targetIndex + 2, end));
         std::cerr<<"parse header: "<<data->getString(begin, targetIndex)<<" : "<<data->getString(targetIndex + 2, end)<<std::endl;
@@ -241,8 +242,38 @@ namespace net{
         if(reqBody->getContentType() == ContentType::application_x_www_form_urlencoded){
             parseParameter(data, [&reqBody](const std::string& k, const std::string& v){reqBody->setParameter(k, v);});
         }
+        else if(reqBody->getContentType() == ContentType::multipart_form_data){
+            std::cerr<<"parse multipart_form_data"<<std::endl;
+            parseMultiParameter(data, reqBody);
+        }
         std::cerr<<"parse request body finished!"<<std::endl;
         return Status::complete;
+    }
+    void HttpUtils::parseMultiParameter(const std::string& data, std::shared_ptr<HttpRequestBody> reqBody){
+        int start = data.find(reqBody->getBoundary());
+        if(start == data.length()) return;
+        start += (reqBody->getBoundary().size() + 2);
+        int target = 0;
+        int end;
+        while(true){
+            end = data.find(reqBody->getBoundary(), start);
+            if(end == std::string::npos) break;
+            MultiPart multiPart;
+            while(true){
+                target = data.find(CRLFPattern, start);
+                if(target == start) {
+                    multiPart.setData(data.substr(start + 2, end - 4 - start)); //fix me
+                    start = end + reqBody->getBoundary().size() + 2;
+                    break;
+                }
+                else{
+                    int colon = data.find(colonPattern, start);
+                    multiPart.setHeader(data.substr(start, colon - start), data.substr(colon + 2, target - 2 - colon));
+                    start = target + 2;
+                }
+            }
+            reqBody->addMultiPart(std::move(multiPart));
+        }
     }
     const std::string HttpUtils::parseToString(const HttpMethod& method){
         switch(method){

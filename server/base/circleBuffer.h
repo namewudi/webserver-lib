@@ -24,7 +24,7 @@ namespace base{
         DataType::iterator begin(){return _data.begin();}
         DataType::iterator end(){return _data.end();}
         int modifyIndex(int index);
-        int find_first_of(int start, int end, const std::string pattern)const;
+        int find(int start, int end, const std::string pattern)const;
         std::string getString(int begin, int end);
 
         DataType _data;

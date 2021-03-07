@@ -1,9 +1,11 @@
 #pragma once
 #include "../../exception/httpException.h"
-
+#include <list>
+#include "./multiPart.h"
 namespace net{
     enum class ContentType{
-        application_x_www_form_urlencoded
+        application_x_www_form_urlencoded,
+        multipart_form_data
     };
     class HttpRequestBody{
     public:
@@ -21,16 +23,23 @@ namespace net{
             if(type == "application/x-www-form-urlencoded"){
                 this->contentType = ContentType::application_x_www_form_urlencoded;
             }
-            else if(type.substr(0, std::string("multipart/form-data").length()) == "multipart/form-data"){
-                //fix me
-                //throw exception::HttpException("未知Content-Type类型");
+            else if(type.find("multipart/form-data") != type.length()){
+                int index = type.find("boundary");
+                if(index != type.size()){
+                    _boundary = type.substr(index + 9);
+                }
+                this->contentType = ContentType::multipart_form_data;
             }
             
+        }
+        const std::string getBoundary()const{
+            return _boundary;
         }
         const ContentType getContentType()const{
             return this->contentType;
         }
         void setParameter(std::string key, std::string value){
+            std::cerr<<"set parameter int body: "<<key <<" : "<< value<<std::endl;
             this->parameterMap[key] = value;
         }
         const std::string getParametersAsString()const{
@@ -54,9 +63,21 @@ namespace net{
         const std::string getAsString()const{
             return _data;
         }
+        void addMultiPart(const MultiPart& multiPart){
+            _multiparts.push_back(multiPart);
+        }
+        void addMultiPart(MultiPart&& multiPart){
+            _multiparts.push_back(std::move(multiPart));
+        }
+        const std::list<MultiPart>& getMultiParts()const{
+            return _multiparts;
+        }
         ParameterMap parameterMap;
         std::string _data;
     private:
+        std::list<MultiPart> _multiparts;
+        std::string _boundary;
         ContentType contentType;
+
     };
 }
