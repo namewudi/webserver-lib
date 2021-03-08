@@ -4,6 +4,7 @@
 #include "httpRequestLine.h"
 #include "httpRequestHeader.h"
 #include "httpRequestBody.h"
+#include "../session/httpSession.h"
 #include <memory>
 #include "../../exception/httpException.h"
 #include "../utils/processStatus.h"
@@ -17,6 +18,7 @@ namespace net{
             this->httpRequestBody = std::make_shared<HttpRequestBody>();
             this->httpRequestHeader = std::make_shared<HttpRequestHeader>();
             this->httpRequestLine = std::make_shared<HttpRequestLine>();
+            this->httpSession = nullptr;
         }
         const Status getStatus()const{
             return this->status;
@@ -61,10 +63,17 @@ namespace net{
         std::shared_ptr<HttpRequestBody> getRequestBody(){
             return this->httpRequestBody;
         }
+        std::shared_ptr<HttpSession> getSession(){
+            if(this->httpSession == nullptr){
+                this->httpSession = std::make_shared<HttpSession>();
+            }
+            return this->httpSession;
+        }
     private:
         std::shared_ptr<HttpRequestBody> httpRequestBody;
         std::shared_ptr<HttpRequestLine> httpRequestLine;
         std::shared_ptr<HttpRequestHeader> httpRequestHeader;
+        std::shared_ptr<HttpSession> httpSession;
         Status status;
     };
 }

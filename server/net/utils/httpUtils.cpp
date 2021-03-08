@@ -107,12 +107,10 @@ namespace net{
                         receivedBody += bodyCanRead;
                         data->setIndex(data->modifyIndex(start + receivedBody));
                         if(bodyLength == receivedBody) {
-                            req->setStatus(parseRequestBody(req->getRequestBody()));
-                            
+                            req->setStatus(parseRequestBody(req->getRequestBody()));                           
                             curStatus = req->getStatus();
                             break;
-                        }
-                        
+                        } 
                     }
                 default:
                     finish = data->size();
@@ -166,7 +164,6 @@ namespace net{
         std::cerr<<"parse request line finished!"<<std::endl;
         return Status::lineComplete;
     }
-    
             
     HttpVersion HttpUtils::parseVersion(std::string version){
         std::cerr<<"start parse version!"<<std::endl;

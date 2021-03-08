@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include "./session/cookie.h"
 namespace net{
     class HttpResponse{
     public:
@@ -31,6 +32,9 @@ namespace net{
         void addBlankLine(){
             _data.append("\r\n");
         }
+        void addCookie(const Cookie& cookie){
+            _cookies.push_back(cookie);
+        }
         void sendRedirect(const std::string& path){
             addBody(R"(<!DOCTYPE html ><html><head>
             <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8" />)");             
@@ -43,6 +47,11 @@ namespace net{
             addBody("</html>");
         }
         const std::string& getAsString() {
+            
+            for(auto cookie : _cookies){
+                std::cout<<"add cookie: "<<cookie.toString()<<std::endl;
+                addHeader("Set-Cookie", cookie.toString());
+            }
             _data.append("\r\n");
             return _data.append(std::move(_content));
         }
@@ -91,5 +100,6 @@ namespace net{
     private:
         std::string _data;
         std::string _content;
+        std::vector<Cookie> _cookies;
     };
 }

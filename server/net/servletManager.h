@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "servlet.h"
+#include "../base/timeStamp.h"
 #include <map>
 namespace net{
     class ServletManager{
@@ -55,6 +56,15 @@ namespace net{
         }
         void handle(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp){
             std::cerr<<"here is servlet manager. url call: "<<req->getUrl()<<std::endl;
+            if(req->getRequestHeader()->hasCookie("SESSION_ID")){
+                req->getSession()->setSessionID(req->getRequestHeader()->getCookie("SESSION_ID"));
+            }
+            else{
+                std::string sessionID = base::TimeStamp().setNow().toCookieString();
+                std::cout<<"set SESSIONID: "<<sessionID<<std::endl;
+                resp->addCookie(Cookie("SESSION_ID", sessionID).setMaxAge(1000).setPath("/"));
+                req->getSession()->setSessionID(sessionID);
+            }
             if(handleDynamicResource(req, resp)) return;
             if(handleStaticResource(req, resp)) return;
             
