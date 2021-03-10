@@ -1,10 +1,10 @@
 #pragma once
-#include "../base/buffer.h"
-#include "utils/httpUtils.h"
+#include "../../base/buffer.h"
+#include "../utils/httpUtils.h"
 #include <fstream>
 #include <string>
 #include <iostream>
-#include "./session/cookie.h"
+#include "cookie.h"
 namespace net{
     class HttpResponse{
     public:
@@ -64,11 +64,8 @@ namespace net{
             std::string str(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>(0));           
             ifs.close();
             addVersion(HttpVersion::HTTP1_1);
-            
             addStatusCode("200");
             addStatusMessage("OK");
-            std::cerr<<"html file size: "<<str.size()<<std::endl;
-            this->addHeader("Content-Length", std::to_string(str.size()));
             _content.append(str);
             return true;
         }
@@ -90,10 +87,7 @@ namespace net{
             
             addStatusCode("200");
             addStatusMessage("OK");
-            std::cerr<<"html file size: "<<str.size()<<std::endl;
-            this->addHeader("Content-Length", std::to_string(str.size()));
             this->addHeader("Content-Type", "text/css");
-            this->addBlankLine();
             _content.append(str);
             return true;
         }

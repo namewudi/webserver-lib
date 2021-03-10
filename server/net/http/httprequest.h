@@ -4,7 +4,7 @@
 #include "httpRequestLine.h"
 #include "httpRequestHeader.h"
 #include "httpRequestBody.h"
-#include "../session/httpSession.h"
+#include "httpSession.h"
 #include <memory>
 #include "../../exception/httpException.h"
 #include "../utils/processStatus.h"

@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include "./httpRequest/httprequest.h"
+#include "httprequest.h"
 #include "httpresponse.h"
 namespace net{
     class Servlet{

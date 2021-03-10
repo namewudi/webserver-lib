@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-#include "../session/cookie.h"
+#include "cookie.h"
 namespace net{
     class HttpRequestHeader{
     public:
