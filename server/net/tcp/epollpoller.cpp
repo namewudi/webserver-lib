@@ -10,7 +10,7 @@ namespace net{
             for(int i = 0; i < nfd; i++){
                 activeChannels[i] = static_cast<Channel*>(_activeEvents[i].data.ptr);
                 activeChannels[i]->setTrigeredEvent(_activeEvents[i].events);
-                std::cerr<<"epoll触发了: "<<_activeEvents[i].events<<std::endl;
+                std::cerr<<std::endl;
             }
         }
 
@@ -47,6 +47,7 @@ namespace net{
         temp.events = eventType;
         if(epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &temp)<0){
             //printf("event add failed [fd=%d], events[%d]\n", fd, eventType);
+            perror(std::string("epoll触发").c_str());
             return false;
         }
         else{

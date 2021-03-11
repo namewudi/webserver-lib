@@ -41,6 +41,7 @@ namespace net{
         }
         bool isFree();
         ~Channel(){
+            std::cout<<"channel 析构, 文件描述符即将销毁"<<std::endl;
             close(_fd);
         }
         std::shared_ptr<base::CircleReadBuffer> inputBuffer();

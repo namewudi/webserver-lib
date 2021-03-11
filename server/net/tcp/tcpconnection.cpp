@@ -25,11 +25,16 @@ namespace net{
         //     _channel->addToPoller(EPOLLIN);
         // }
         if(outputBuffer->remainTaskLength() == 0){
-            _channel->removeFromPoller();
-            _channel->addToPoller(EPOLLIN);
+            std::cout<<"可能会出错"<<std::endl;
+            if(_sendCompleteCallBack != nullptr){
+                _sendCompleteCallBack(this);
+            }
+            //_channel->removeFromPoller();
+            //_channel->addToPoller(EPOLLIN);
         }
     }
     void TcpConnection::handleClose(){
+        std::cout<<"tcp connection handle close"<<std::endl;
         _channel->destroy();
         if(_closeCallBack) _closeCallBack(this);
     }

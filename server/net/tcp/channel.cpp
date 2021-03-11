@@ -11,6 +11,7 @@ namespace net{
         _event = _event | eventType; // fix me
     }
     void Channel::destroy(){
+        std::cout<<"channel destroy触发, 文件描述符即将销毁"<<std::endl;
         removeFromPoller();
         close(_fd);
         clear();
@@ -73,7 +74,7 @@ namespace net{
         //int event = eventType();
         int event = getTrigeredEvent();
         if(_owner->isCloseEvent(event)){
-            
+            std::cerr<<"关闭事件触发"<<std::endl;
             if(_closeCallBack) _closeCallBack();
         }
         if(_owner->isErrorEvent(event)){

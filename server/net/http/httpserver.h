@@ -19,12 +19,20 @@ namespace net{
                 std::cerr<<"message processing : start!"<<std::endl;
                 std::shared_ptr<HttpRequest> req = std::make_shared<HttpRequest>();
                 HttpUtils::parseRequest(b, req);
+                if(req->hasHeader("Connection") && req->getHeader("Connection") == "keep-alive"){
+                    a->setSendCompleteCallBack([](TcpConnection* conn){
+                        conn->getChannel()->removeFromPoller();
+                        conn->getChannel()->addToPoller(EPOLLIN);
+                    });
+                }
+                else{
+                    a->setSendCompleteCallBack([](TcpConnection* conn){
+                        conn->handleClose();
+                    });
+                }
                 std::shared_ptr<HttpResponse> resp = std::make_shared<HttpResponse>();
                 this->_servletManager->handle(req, resp);
                 a->sendInfinite(resp->getAsString());//大文件传输
-                if(req->getHeader("Connection") != "keep-alive"){
-                    a->handleClose();
-                }
                 a->finishMessageProcss();
                 std::cerr<<"message processing : end!"<<std::endl;
             });

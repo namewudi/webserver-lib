@@ -12,6 +12,7 @@ namespace net{
         using MessageProcessor = std::function<void(TcpConnection*, std::shared_ptr<base::CircleReadBuffer>)>;
         using ConnectionCallBack = std::function<void(const TcpConnection*)>;
         using CloseCallBack = std::function<void(TcpConnection*)>;
+        using SendCompleteCallBack = std::function<void(TcpConnection*)>;
         TcpConnection(const std::string& name, int fd, Channel* channel, std::thread::id id): _fd(fd),
                                                                           _channel(channel),
                                                                           _name(name),
@@ -25,6 +26,7 @@ namespace net{
             channel->setErrorCallBack(std::bind(&TcpConnection::handleError, this));
         }
         ~TcpConnection(){
+
             _channel->destroy();
             std::cout<<"close connection. fd = "<<_fd<<std::endl;
         }
@@ -34,6 +36,7 @@ namespace net{
         void setConnectionCallBack(ConnectionCallBack);
         void setMessageProcessor(MessageProcessor);
         void setCloseCallBack(CloseCallBack);
+        void setSendCompleteCallBack(SendCompleteCallBack callBack){this->_sendCompleteCallBack = std::move(callBack);}
         const std::string name()const;
         void startMessageProcss(){
             _messageProcssing = true;
@@ -43,6 +46,9 @@ namespace net{
         }
         bool messageProcssing(){
             return _messageProcssing;
+        }
+        Channel* getChannel(){
+            return _channel;
         }
         void handleRead();
         void handleWrite();
@@ -54,6 +60,7 @@ namespace net{
     private:
         int _fd;
         const std::thread::id _ownerThreadID;
+        SendCompleteCallBack _sendCompleteCallBack;
         ConnectionCallBack _connectionCallBack;
         MessageProcessor _messageProcessor;
         bool _messageProcssing;

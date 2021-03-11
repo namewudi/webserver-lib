@@ -8,29 +8,27 @@
 namespace net{
     class HttpResponse{
     public:
+        HttpResponse(): _line(3){}
         void addVersion(const HttpVersion& version){
-            _data.append(HttpUtils::parseToString(version));
-            _data.push_back(' ');
+            _line[0] = HttpUtils::parseToString(version);
         }
         void addStatusCode(const std::string& s){
-            _data.append(s);
-            _data.push_back(' ');
+            _line[1] = s;
         }
         void addStatusMessage(const std::string& s){
-            _data.append(s);
-            _data.append("\r\n");
+            _line[2] = s;
         }
         void addHeader(const std::string& a, const std::string& b){
-            _data.append(a);
-            _data.append(": ");
-            _data.append(b);
-            addBlankLine();
+            _header.append(a);
+            _header.append(": ");
+            _header.append(b);
+            addBlankLine(_header);
         }
         void addBody(const std::string& s){
             _content.append(s);
         }
-        void addBlankLine(){
-            _data.append("\r\n");
+        void addBlankLine(std::string& data){
+            data.append("\r\n");
         }
         void addCookie(const Cookie& cookie){
             _cookies.push_back(cookie);
@@ -46,14 +44,19 @@ namespace net{
             addBody("</body>");
             addBody("</html>");
         }
-        const std::string& getAsString() {
-            
+        const std::string getAsString() {
+            std::string result;
+            result.append(_line[0]);
+            result.push_back(' ');
+            result.append(_line[1]);
+            result.push_back(' ');
+            result.append(_line[2]);
+            addBlankLine(result);
             for(auto cookie : _cookies){
                 std::cout<<"add cookie: "<<cookie.toString()<<std::endl;
                 addHeader("Set-Cookie", cookie.toString());
             }
-            _data.append("\r\n");
-            return _data.append(std::move(_content));
+            return result + _header +  "\r\n" + _content;
         }
         const int getContentLength() const{
             return _content.length();
@@ -92,7 +95,8 @@ namespace net{
             return true;
         }
     private:
-        std::string _data;
+        std::vector<std::string> _line;
+        std::string _header;
         std::string _content;
         std::vector<Cookie> _cookies;
     };
