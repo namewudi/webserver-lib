@@ -28,12 +28,8 @@ namespace net{
             return false;
         }
         resp->addVersion(req->getVersion());
-        
         resp->addStatusCode("200");
         resp->addStatusMessage("OK");
-        if(req->getHeader("Connection") == "keep-alive"){
-            resp->addHeader("Connection", "keep-alive");
-        }
         switch (req->getMethod())
         {
         case HttpMethod::GET:
