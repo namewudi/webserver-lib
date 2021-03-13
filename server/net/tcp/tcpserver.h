@@ -6,6 +6,7 @@
 #include <functional>
 #include "socketinfor.h"
 #include <thread>
+#include <mutex>
 #include "managerPool.h"
 namespace net{
     class TcpServer{
@@ -19,11 +20,12 @@ namespace net{
         void setMessageProcessor(TcpConnection::MessageProcessor);
     private:
         void newConnection(SocketInfor);
-        void removeConnection(TcpConnection*);
+        void removeConnection(std::shared_ptr<TcpConnection>);
         TcpConnection::ConnectionCallBack _connectionCallBack;
         TcpConnection::MessageProcessor _messageProcessor;
         ManagerPool _eventManagers;
         Acceptor _acceptor;
+        std::mutex _mutex;
         std::map<const std::string, std::shared_ptr<TcpConnection>> _connectionMap;
     };
 }
