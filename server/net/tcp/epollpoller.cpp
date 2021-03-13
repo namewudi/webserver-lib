@@ -10,7 +10,6 @@ namespace net{
             for(int i = 0; i < nfd; i++){
                 activeChannels[i] = static_cast<Channel*>(_activeEvents[i].data.ptr);
                 activeChannels[i]->setTrigeredEvent(_activeEvents[i].events);
-                std::cerr<<std::endl;
             }
         }
 
@@ -28,7 +27,7 @@ namespace net{
         return  event & EPOLLERR; //修改
     }
     bool EpollPoller::removeChannel(int fd){
-        std::cerr<<"remove from poller"<<std::endl;
+        //std::cerr<<"remove from poller"<<std::endl;
         epoll_event temp = {0, {0}};
         temp.data.ptr = nullptr;
         if(epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, &temp) < 0) {
@@ -46,8 +45,7 @@ namespace net{
         temp.data.ptr = static_cast<void*>(channel);
         temp.events = eventType;
         if(epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &temp)<0){
-            //printf("event add failed [fd=%d], events[%d]\n", fd, eventType);
-            perror(std::string("epoll触发").c_str());
+            perror(std::string("文件描述符 " + std::to_string(fd) + " epoll错误触发").c_str());
             return false;
         }
         else{

@@ -16,7 +16,7 @@ namespace net{
         static void handle404(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp);
         static bool handleDynamicResource(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp);
         static void handleRequest(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp){
-            std::cout<<"start handle request!"<<std::endl;
+            //std::cout<<"start handle request!"<<std::endl;
             if(handleDynamicResource(req, resp)) return;
             if(handleStaticResource(req, resp)) return;
             handle404(req, resp);
@@ -37,7 +37,7 @@ namespace net{
         }
         void doFilter(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp, std::shared_ptr<FilterChain> chain)override{
             chain->doFilter(req, resp);
-            std::cout<<"Content-Length: "<<std::to_string(resp->getContentLength())<<std::endl;
+            //std::cout<<"Content-Length: "<<std::to_string(resp->getContentLength())<<std::endl;
             resp->addHeader("Content-Length", std::to_string(resp->getContentLength()));
         }
     };

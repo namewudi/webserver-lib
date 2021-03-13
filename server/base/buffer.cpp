@@ -24,10 +24,10 @@ namespace base{
         //std::cout<<"toc"<<std::endl;
         if(n <= 0) return 0;
 
-        std::cout<<"start read. fd = "<<fd<<std::endl;
-        std::cout<<"current size: "<<size();
-        std::cout<<" Byte : "<<n<<std::endl;
-        std::cout<<"data: "<<std::endl;
+        // std::cout<<"start read. fd = "<<fd<<std::endl;
+        // std::cout<<"current size: "<<size();
+        // std::cout<<" Byte : "<<n<<std::endl;
+        // std::cout<<"data: "<<std::endl;
         int curSize = size();
         _size += n;
         for(int i = 0; i < n; i++){
@@ -43,8 +43,8 @@ namespace base{
         }
         
         int n = write(fd, &_data[0] + _writeidx, byteToWrite());
-        std::cout<<"start write. fd = "<<fd<<" Byte : " <<byteToWrite()<<"write index :"<<_writeidx<<std::endl;
-        std::cout<<"data: "<<std::endl;
+        // std::cout<<"start write. fd = "<<fd<<" Byte : " <<byteToWrite()<<"write index :"<<_writeidx<<std::endl;
+        // std::cout<<"data: "<<std::endl;
         for(int i = 0; i < n; i++){
             std::cout<<_data[_writeidx + i];
         }

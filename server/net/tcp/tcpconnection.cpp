@@ -8,17 +8,17 @@ namespace net{
             if(_messageProcessor != nullptr) {//同时读取多个请求将引发并发问题 fix me
                 if(messageProcssing()) return;
                 this->startMessageProcss();
-                base::ThreadPoolSingleton::get().execute([this](){_messageProcessor(this, _channel->inputBuffer());});
+                base::ThreadPoolSingleton::get().execute([this](){_messageProcessor(shared_from_this(), _channel->inputBuffer());});
             }
         }
         else {
-            std::cerr<<"读不到内容!"<<std::endl;
+            //std::cerr<<"读不到内容!"<<std::endl;
             handleClose();
         }
     }
     void TcpConnection::handleWrite(){
         std::shared_ptr<base::CircleWriteBuffer> outputBuffer = _channel->outputBuffer();
-        std::cerr<<"start handle write!"<<std::endl;
+        //std::cerr<<"start handle write!"<<std::endl;
         outputBuffer->writeToFd(_channel->fd());
         // if(outputBuffer->byteToWrite() == 0){
         //     _channel->removeFromPoller();
@@ -26,14 +26,14 @@ namespace net{
         // }
         if(outputBuffer->remainTaskLength() == 0){
             if(_sendCompleteCallBack != nullptr){
-                _sendCompleteCallBack(this);
+                _sendCompleteCallBack(shared_from_this());
             }
         }
     }
     void TcpConnection::handleClose(){
-        std::cout<<"tcp connection handle close"<<std::endl;
+        //std::cout<<"tcp connection handle close"<<std::endl;
         _channel->destroy();
-        if(_closeCallBack) _closeCallBack(this);
+        if(_closeCallBack) _closeCallBack(shared_from_this());
     }
     void TcpConnection::handleError(){
 

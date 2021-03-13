@@ -40,9 +40,10 @@ namespace net{
             _trigeredEvent = event;;
         }
         bool isFree();
-        ~Channel(){
-            std::cout<<"channel 析构, 文件描述符即将销毁"<<std::endl;
-            close(_fd);
+        ~Channel(){  
+            if(_fd != -1){
+                close(_fd);
+            }
         }
         std::shared_ptr<base::CircleReadBuffer> inputBuffer();
         std::shared_ptr<base::CircleWriteBuffer> outputBuffer();

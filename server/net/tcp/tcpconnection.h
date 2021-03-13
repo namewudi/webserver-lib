@@ -7,12 +7,12 @@
 #include <thread>
 #include "../../base/threadpoolSingleton.h"
 namespace net{
-    class TcpConnection{
+    class TcpConnection: public std::enable_shared_from_this<TcpConnection>{
     public:
-        using MessageProcessor = std::function<void(TcpConnection*, std::shared_ptr<base::CircleReadBuffer>)>;
-        using ConnectionCallBack = std::function<void(const TcpConnection*)>;
-        using CloseCallBack = std::function<void(TcpConnection*)>;
-        using SendCompleteCallBack = std::function<void(TcpConnection*)>;
+        using MessageProcessor = std::function<void(std::shared_ptr<TcpConnection>, std::shared_ptr<base::CircleReadBuffer>)>;
+        using ConnectionCallBack = std::function<void(std::shared_ptr<const TcpConnection>)>;
+        using CloseCallBack = std::function<void(std::shared_ptr<TcpConnection>)>;
+        using SendCompleteCallBack = std::function<void(std::shared_ptr<TcpConnection>)>;
         TcpConnection(const std::string& name, int fd, Channel* channel, std::thread::id id): _fd(fd),
                                                                           _channel(channel),
                                                                           _name(name),
@@ -24,11 +24,6 @@ namespace net{
             channel->setWriteCallBack(std::bind(&TcpConnection::handleWrite, this));
             channel->setCloseCallBack(std::bind(&TcpConnection::handleClose, this));
             channel->setErrorCallBack(std::bind(&TcpConnection::handleError, this));
-        }
-        ~TcpConnection(){
-
-            _channel->destroy();
-            std::cout<<"close connection. fd = "<<_fd<<std::endl;
         }
         void enable();
         void send(std::string);

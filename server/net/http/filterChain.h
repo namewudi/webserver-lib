@@ -10,7 +10,7 @@ namespace net{
         void doFilter(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp){
             auto trigeredUrl = req->getUrl();
             auto path = _curFilter->getPath();
-            std::cout<<"here is chain: "<<path<<std::endl;
+            //std::cout<<"here is chain: "<<path<<std::endl;
             if(path == trigeredUrl.substr(0, std::min(path.length(), trigeredUrl.length()))){
                 _curFilter->doFilter(req, resp, _nextChain);
             }

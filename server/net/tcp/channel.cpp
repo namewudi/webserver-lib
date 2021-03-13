@@ -11,7 +11,7 @@ namespace net{
         _event = _event | eventType; // fix me
     }
     void Channel::destroy(){
-        std::cout<<"channel destroy触发, 文件描述符即将销毁"<<std::endl;
+        //std::cout<<"channel destroy触发, 文件描述符 "<<_fd<<" 即将销毁"<<std::endl;
         removeFromPoller();
         close(_fd);
         clear();
@@ -51,7 +51,7 @@ namespace net{
         return _event;
     }
     void Channel::addToPoller(int eventType){
-        std::cerr<<"修改监听类型:"<<eventType<<std::endl;
+        //std::cerr<<"修改监听类型:"<<eventType<<std::endl;
         std::lock_guard<std::mutex> lg(_mutex);
         if(!Monitored()){
             assert(_owner->addChannel(this, _fd, eventType));
@@ -74,18 +74,18 @@ namespace net{
         //int event = eventType();
         int event = getTrigeredEvent();
         if(_owner->isCloseEvent(event)){
-            std::cerr<<"关闭事件触发"<<std::endl;
+            //std::cerr<<"关闭事件触发"<<std::endl;
             if(_closeCallBack) _closeCallBack();
         }
         if(_owner->isErrorEvent(event)){
             if(_errorCallBack) _errorCallBack();
         }
         if(_owner->isInEvent(event)){
-            std::cerr<<"读事件触发"<<std::endl;
+            //std::cerr<<"读事件触发"<<std::endl;
             if(_readCallBack) _readCallBack();
         }
         if(_owner->isOutEvent(event)){
-            std::cerr<<"写事件触发"<<std::endl;
+            //std::cerr<<"写事件触发"<<std::endl;
             if(_writeCallBack) _writeCallBack();
         }
     }

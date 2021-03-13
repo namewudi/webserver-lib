@@ -44,13 +44,13 @@ namespace net{
         return true;
     }
     void ServletManager::handle(std::shared_ptr<HttpRequest>& req, std::shared_ptr<HttpResponse>& resp){
-        std::cerr<<"here is servlet manager. url call: "<<req->getUrl()<<std::endl;
+        //std::cerr<<"here is servlet manager. url call: "<<req->getUrl()<<std::endl;
         if(req->getRequestHeader()->hasCookie("SESSION_ID")){
             req->getSession()->setSessionID(req->getRequestHeader()->getCookie("SESSION_ID"));
         }
         else{
             std::string sessionID = base::TimeStamp().setNow().toCookieString();
-            std::cout<<"set SESSIONID: "<<sessionID<<std::endl;
+            //std::cout<<"set SESSIONID: "<<sessionID<<std::endl;
             resp->addCookie(Cookie("SESSION_ID", sessionID).setMaxAge(1000).setPath("/"));
             req->getSession()->setSessionID(sessionID);
         }

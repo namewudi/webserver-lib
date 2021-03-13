@@ -53,7 +53,7 @@ namespace net{
             result.append(_line[2]);
             addBlankLine(result);
             for(auto cookie : _cookies){
-                std::cout<<"add cookie: "<<cookie.toString()<<std::endl;
+                //std::cout<<"add cookie: "<<cookie.toString()<<std::endl;
                 addHeader("Set-Cookie", cookie.toString());
             }
             return result + _header +  "\r\n" + _content;

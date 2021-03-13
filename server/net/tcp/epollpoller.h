@@ -2,6 +2,8 @@
 #include "poller.h"
 #include "channel.h"
 #include <stdio.h>
+#include <iostream>
+#include <memory>
 namespace net{
     class Channel;
     class EpollPoller: public Poller{

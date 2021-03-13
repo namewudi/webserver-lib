@@ -10,7 +10,8 @@ namespace net{
             }
         }
     }
-    Channel* Event::getFreeChannel()const{
+    Channel* Event::getFreeChannel(){
+        std::lock_guard<std::mutex> lg(_mutex);
         int idx = std::find_if(_channels.begin(), _channels.end(), [](Channel* channel){
             return channel->isFree();
         }) - _channels.begin();

@@ -13,7 +13,7 @@ namespace base{
         }
         int n = 0;
         
-        std::cout<<"start write. fd = "<<fd<<" Byte = " <<byteToWrite()<<" start index = "<<_index<<std::endl;
+        //std::cout<<"start write. fd = "<<fd<<" Byte = " <<byteToWrite()<<" start index = "<<_index<<std::endl;
         if(byteToWrite() > capacity() - _index){
             n = write(fd, &_data[_index], capacity() - _index);   
         }
@@ -30,11 +30,11 @@ namespace base{
         std::lock_guard<std::mutex> guarded(_mutex);
         _index += n;
         _taskLength -= n;
-        std::cerr<<"after write. remain task length: "<<_taskLength<<std::endl;
+        //std::cerr<<"after write. remain task length: "<<_taskLength<<std::endl;
         _index = modifyIndex(_index);
         _condVari.notify_one();
 
-        std::cerr<<"write complete, remain byte to write : "<<byteToWrite()<<std::endl;
+        //std::cerr<<"write complete, remain byte to write : "<<byteToWrite()<<std::endl;
         return n;
     }
     void CircleWriteBuffer::append(const char* buffer, int len){
@@ -60,7 +60,7 @@ namespace base{
         append(&s.front(), s.size());
     }
     void CircleWriteBuffer::appendInfinite(const char* buffer, int len){
-        std::cerr<<"after append. remain task length: "<<_taskLength<<std::endl;
+        //std::cerr<<"after append. remain task length: "<<_taskLength<<std::endl;
         std::unique_lock<std::mutex> uniqLock(_mutex);
         int remainLen = len;
         int curfreeSize;

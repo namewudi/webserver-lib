@@ -15,18 +15,18 @@ namespace net{
         HttpServer(int port, int threadNum = 3, int num = 100): _tcpServer(port, threadNum, num){
             _servletManager = std::make_shared<ServletManager>();
             _servletManager->init();
-            _tcpServer.setMessageProcessor([this](TcpConnection* a, std::shared_ptr<base::CircleReadBuffer> b){
-                std::cerr<<"message processing : start!"<<std::endl;
+            _tcpServer.setMessageProcessor([this](std::shared_ptr<TcpConnection> a, std::shared_ptr<base::CircleReadBuffer> b){
+                //std::cerr<<"message processing : start!"<<std::endl;
                 std::shared_ptr<HttpRequest> req = std::make_shared<HttpRequest>();
                 HttpUtils::parseRequest(b, req);
                 if(req->hasHeader("Connection") && req->getHeader("Connection") == "keep-alive"){
-                    a->setSendCompleteCallBack([](TcpConnection* conn){
+                    a->setSendCompleteCallBack([](std::shared_ptr<TcpConnection> conn){
                         conn->getChannel()->removeFromPoller();
                         conn->getChannel()->addToPoller(EPOLLIN);
                     });
                 }
                 else{
-                    a->setSendCompleteCallBack([](TcpConnection* conn){
+                    a->setSendCompleteCallBack([](std::shared_ptr<TcpConnection> conn){
                         conn->handleClose();
                     });
                 }
@@ -34,7 +34,7 @@ namespace net{
                 this->_servletManager->handle(req, resp);
                 a->sendInfinite(resp->getAsString());//大文件传输
                 a->finishMessageProcss();
-                std::cerr<<"message processing : end!"<<std::endl;
+                //std::cerr<<"message processing : end!"<<std::endl;
             });
         }
 

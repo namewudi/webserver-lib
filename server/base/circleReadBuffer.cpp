@@ -10,8 +10,8 @@ namespace base{
             std::cerr<<"读缓冲区空闲空间为0！"<<std::endl;
             return -1;
         }
-        std::cout<<"start read. fd = "<<fd<<std::endl;
-        std::cout<<"current size: "<<size()<<std::endl;
+        // std::cout<<"start read. fd = "<<fd<<std::endl;
+        // std::cout<<"current size: "<<size()<<std::endl;
         int n = read(fd, &_data[size()], std::min(freeSize(), capacity() - size()));// fix me
 
         if(n <= 0) return 0;
@@ -30,7 +30,7 @@ namespace base{
         */
         _size = modifyIndex(_size + n);
 
-        std::cout<<"read complete!"<<"read byte "<< n <<"  free size "<<freeSize()<<std::endl;
+        //std::cout<<"read complete!"<<"read byte "<< n <<"  free size "<<freeSize()<<std::endl;
         return n;
     }
 }
