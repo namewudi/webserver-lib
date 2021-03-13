@@ -25,12 +25,9 @@ namespace net{
         //     _channel->addToPoller(EPOLLIN);
         // }
         if(outputBuffer->remainTaskLength() == 0){
-            std::cout<<"可能会出错"<<std::endl;
             if(_sendCompleteCallBack != nullptr){
                 _sendCompleteCallBack(this);
             }
-            //_channel->removeFromPoller();
-            //_channel->addToPoller(EPOLLIN);
         }
     }
     void TcpConnection::handleClose(){

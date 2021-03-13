@@ -21,7 +21,7 @@ namespace net{
             return this->parameterMap;
         }
         const std::string getParametersAsString()const{
-            std::string result("{<br/>");
+            std::string result;
             for(auto iter = this->parameterMap.begin(); iter != this->parameterMap.end();){
                 result += iter->first;
                 result += ':';
@@ -29,7 +29,6 @@ namespace net{
                 iter++;
                 if(iter != this->parameterMap.end()) result += ";<br/>";
             }
-            result += "<br/>}<br/>";
             return result;
         }
         const std::string getParameter(const std::string key){

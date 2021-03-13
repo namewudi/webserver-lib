@@ -7,7 +7,7 @@ using namespace std;
 using namespace net;
 using namespace base;
 
-const std::string basePath = "/home/wudi/develop/serverLib/application/resources/";
+const std::string basePath = "/home/amax/wudi/develop/serverLib/application/resources/static/";
 
 string getTime() {
 	std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
@@ -28,7 +28,7 @@ public:
         Servlet::setPath("/hello");
     }
     void doGet(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp)override{
-        resp->addHtml(basePath + "static/index.html");
+        resp->addHtml(basePath + "/index.html");
     }
     void doPost(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp)override{
         this->doGet(req, resp);
@@ -52,26 +52,11 @@ public:
 };
 
 
-class Icon:public Servlet{
-public:
-    Icon(){
-        Servlet::setPath("/favicon.ico");
-    }
-    void doGet(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp)override{
-        
-        resp->addHtml(basePath + "static/favicon.ico");
-    }
-    void doPost(std::shared_ptr<HttpRequest> req, std::shared_ptr<HttpResponse> resp)override{
-        this->doGet(req, resp);
-    }
-};
-
-
 int main(){
     HttpServer server(9527);
+    server.setStaticResourcePath(basePath);
     server.registServlet(std::shared_ptr<Servlet>(new Home));
     server.registServlet(std::shared_ptr<Servlet>(new LoginSuccess));
-    server.registServlet(std::shared_ptr<Servlet>(new Icon));
     server.start();
     return 0;
 }
