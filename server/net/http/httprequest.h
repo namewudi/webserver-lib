@@ -4,7 +4,7 @@
 #include "httpRequestLine.h"
 #include "httpRequestHeader.h"
 #include "httpRequestBody.h"
-#include "httpSession.h"
+#include "httpSessionFactory.h"
 #include <memory>
 #include "../../exception/httpException.h"
 #include "../utils/processStatus.h"
@@ -12,13 +12,13 @@ namespace net{
     
     class HttpRequest{ 
     public:
-        //HttpRequest(base::Buffer* buffer): data(std::move(buffer->getAllAsString())){}
-        HttpRequest(){
+        HttpRequest(std::shared_ptr<HttpSessionFactory> httpSessionFactory = std::make_shared<HttpSessionRedisFactory>("localhost", 6379)){
             this->status = Status::init;
             this->httpRequestBody = std::make_shared<HttpRequestBody>();
             this->httpRequestHeader = std::make_shared<HttpRequestHeader>();
             this->httpRequestLine = std::make_shared<HttpRequestLine>();
             this->httpSession = nullptr;
+            this->_httpSessionFactory = httpSessionFactory;
         }
         const Status getStatus()const{
             return this->status;
@@ -65,7 +65,7 @@ namespace net{
         }
         std::shared_ptr<HttpSession> getSession(){
             if(this->httpSession == nullptr){
-                this->httpSession = std::make_shared<HttpSession>();
+                this->httpSession = _httpSessionFactory->getInstance();
             }
             return this->httpSession;
         }
@@ -74,6 +74,7 @@ namespace net{
         std::shared_ptr<HttpRequestLine> httpRequestLine;
         std::shared_ptr<HttpRequestHeader> httpRequestHeader;
         std::shared_ptr<HttpSession> httpSession;
+        std::shared_ptr<HttpSessionFactory> _httpSessionFactory;
         Status status;
     };
 }

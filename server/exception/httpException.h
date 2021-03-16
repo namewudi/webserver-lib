@@ -17,18 +17,14 @@ namespace exception{
     };
     class HttpVersionException: public HttpException{
     public:
-        const char* what() const noexcept override{
-            return "can't parse Http version!";
-        }
+        HttpVersionException(){};
+        HttpVersionException(const std::string& msg):HttpException(msg){}
+        HttpVersionException(std::string&& msg):HttpException(std::move(msg)){}
     };
     class HttpMethodException: public HttpException{
     public:
         HttpMethodException(){};
-        HttpMethodException(const std::string& msg){
-            this->msg = msg;
-        }
-        HttpMethodException(std::string&& msg){
-            this->msg = std::move(msg);
-        }
+        HttpMethodException(const std::string& msg):HttpException(msg){}
+        HttpMethodException(std::string&& msg):HttpException(std::move(msg)){}
     };
 }

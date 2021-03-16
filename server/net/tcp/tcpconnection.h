@@ -50,6 +50,7 @@ namespace net{
         void handleClose();
         void handleError();
         void finishSend();
+        static void setThreadPoolSize(int sz){_threadPoolSize = sz;}
         const std::thread::id getOwnerThreadID()const;
         const int fd() const;
     private:
@@ -62,5 +63,6 @@ namespace net{
         CloseCallBack _closeCallBack;
         Channel* _channel;
         const std::string _name;
+        static int _threadPoolSize;
     };
 }

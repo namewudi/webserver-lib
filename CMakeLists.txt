@@ -17,13 +17,13 @@ aux_source_directory(server/net/http SRC_NET_HTTP)
 aux_source_directory(server/net/tcp SRC_NET_TCP)
 
 aux_source_directory(application/src/controller SRC_CRL)
-
+link_directories("/usr/local/lib/")
 
 add_library(myserver SHARED  ${SRC_BASE} ${SRC_NET} ${SRC_EXCPT} ${SRC_NET_UTILS} ${SRC_NET_HTTP} ${SRC_NET_TCP})
 
 
 add_executable(httpApplication ${SRC_CRL} application/src/controller/testApplication)
-target_link_libraries(httpApplication myserver)
+target_link_libraries(httpApplication myserver hiredis)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)

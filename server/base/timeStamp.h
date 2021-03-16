@@ -6,6 +6,7 @@ namespace base{
     public:
         std::chrono::system_clock::time_point tp;
         TimeStamp(){}
+        TimeStamp(const std::chrono::system_clock::time_point& tp){this->tp = tp;}
         TimeStamp& setNow() {
             tp = std::chrono::system_clock::now(); 
             return *this;
@@ -13,6 +14,11 @@ namespace base{
         void operator += (int second){
             std::chrono::seconds sec(second);
             tp += sec;
+        }
+        TimeStamp operator + (int second){
+            std::chrono::seconds sec(second);
+            auto resultTp = tp + sec;
+            return TimeStamp(resultTp);
         }
         std::string toString(){
             time_t a = std::chrono::system_clock::to_time_t(tp);

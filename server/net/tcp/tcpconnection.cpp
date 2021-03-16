@@ -1,6 +1,7 @@
 #include "tcpconnection.h"
 
 namespace net{
+    int TcpConnection::_threadPoolSize = 5;
     void TcpConnection::handleRead(){
         std::shared_ptr<base::CircleReadBuffer> inputBuffer = _channel->inputBuffer();
         if(inputBuffer->readFromFd(_channel->fd()) != 0){
@@ -8,7 +9,7 @@ namespace net{
             if(_messageProcessor != nullptr) {//同时读取多个请求将引发并发问题 fix me
                 if(messageProcssing()) return;
                 this->startMessageProcss();
-                base::ThreadPoolSingleton::get().execute([this](){_messageProcessor(shared_from_this(), _channel->inputBuffer());});
+                base::ThreadPoolSingleton::get(_threadPoolSize).execute([this](){_messageProcessor(shared_from_this(), _channel->inputBuffer());});
             }
         }
         else {

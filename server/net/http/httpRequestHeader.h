@@ -22,7 +22,7 @@ namespace net{
                     }
                     cv = value.substr(index + 1, target - index - 1);
                     _cookies[ck] = cv;
-                    std::cout<<"cookie key: "<<ck<<"cookie value: "<<cv<<std::endl;
+                    //std::cout<<"cookie key: "<<ck<<"cookie value: "<<cv<<std::endl;
                 }
             }
             else{
@@ -30,7 +30,14 @@ namespace net{
             }
         }
         const std::string getCookie(const std::string& key)const{
-            return _cookies.at(key);
+            std::string result;
+            try{
+                result = _cookies.at(key);
+            }
+            catch(std::out_of_range){
+                std::cout<<"get Cookie失败"<<std::endl;
+            }
+            return result;
         }
         bool hasCookie(const std::string& key)const{
             return _cookies.count(key) > 0;
@@ -43,7 +50,14 @@ namespace net{
             return result;
         }
         const std::string getHeader(const std::string& key)const{
-            return headerMap.at(key);
+            std::string result;
+            try{
+                result = headerMap.at(key);
+            }
+            catch(std::out_of_range){
+                std::cout<<"get Header失败"<<std::endl;
+            }
+            return result;
         }
         bool hasHeader(const std::string& key)const{
             return headerMap.count(key) > 0;

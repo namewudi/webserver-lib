@@ -8,9 +8,9 @@
 namespace net{
     class ManagerPool{
     public:
-        explicit ManagerPool(int threadNum = 5, int eventNum = 10):_idx(0){
-            assert(threadNum > 0);
-            _size = threadNum;
+        explicit ManagerPool(int LoopNum = 5, int eventNum = 10):_idx(0){
+            assert(LoopNum > 0);
+            _size = LoopNum;
             auto threadFunc = [this, eventNum](){
                 auto id = std::this_thread::get_id();
                 auto event = std::make_shared<Event>(eventNum);
@@ -21,7 +21,7 @@ namespace net{
 
                 event->loop();
             };
-            for(int i = 0; i < threadNum; i++){
+            for(int i = 0; i < LoopNum; i++){
                 _pool.push_back(std::thread(threadFunc));
             }
         }

@@ -39,7 +39,7 @@ namespace net{
             return this->contentType;
         }
         void setParameter(std::string key, std::string value){
-            std::cerr<<"set parameter int body: "<<key <<" : "<< value<<std::endl;
+            //std::cerr<<"set parameter int body: "<<key <<" : "<< value<<std::endl;
             this->parameterMap[key] = value;
         }
         const std::string getParametersAsString()const{

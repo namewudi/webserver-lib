@@ -12,6 +12,9 @@ namespace base{
         CircleWriteBuffer(){
             _taskLength = 0;
         }
+        CircleWriteBuffer(int bufferSize):CircleBuffer(bufferSize){
+            _taskLength = 0;
+        }
         const int byteToWrite() const;
         int writeToFd(int fd);
         bool writable(int len){return freeSize() >= len;}

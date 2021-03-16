@@ -15,11 +15,11 @@ namespace net{
         using EventCallBack = std::function<void()>;
         //using EventNotifier = std::function<void()>;
     public:
-        Channel(std::shared_ptr<Poller> poller) : _owner(poller),
+        Channel(std::shared_ptr<Poller> poller, int bufferSize = 30720) : _owner(poller),
                                                   _unused(1),
                                                   _beingMonitored(0),
-                                                  _inputBuffer(std::make_shared<base::CircleReadBuffer>()),
-                                                  _outputBuffer(std::make_shared<base::CircleWriteBuffer>()){};
+                                                  _inputBuffer(std::make_shared<base::CircleReadBuffer>(bufferSize)),
+                                                  _outputBuffer(std::make_shared<base::CircleWriteBuffer>(bufferSize)){};
         void setReadCallBack(EventCallBack);
         void setWriteCallBack(EventCallBack);
         void setCloseCallBack(EventCallBack);

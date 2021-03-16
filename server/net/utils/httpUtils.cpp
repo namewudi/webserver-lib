@@ -85,13 +85,15 @@ namespace net{
                                 }
                             }
                             else{
-                                throw exception::HttpException();
+                                //bodyLength = data->byteToRead();
+                                throw exception::HttpException("不包含Content-Length");
                             }
                             if(req->hasHeader("Content-Type")){
                                 req->getRequestBody()->setContentType(req->getHeader("Content-Type"));
                                 //std::cerr<<"Content-Type: "<<req->getHeader("Content-Type")<<std::endl;
                             }
                             else{
+                                //req->getRequestBody()->setContentType("application/x-www-form-urlencoded");
                                 throw exception::HttpException("不包含Content-Type");
                             }
                         }
