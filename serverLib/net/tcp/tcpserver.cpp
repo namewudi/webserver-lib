@@ -2,7 +2,7 @@
 
 namespace net{
     void TcpServer::start(){
-        _acceptor.listen();
+        _acceptor->listen();
     }
     void TcpServer::newConnection(SocketInfor clientInfor){
         std::shared_ptr<Event> eventManager = _eventManagers.get();
@@ -31,7 +31,7 @@ namespace net{
         }
         
         //std::cout<<"here is thread: "<<conn->getOwnerThreadID()<<std::endl;
-        std::cout<<name<<" comes. "<<"total connection: "<<_connectionMap.size()<<std::endl;
+        std::cout<<base::TimeStamp::getNowAsString()<<" : "<<name<<" comes. "<<"total connection: "<<_connectionMap.size()<<std::endl;
     }
     void TcpServer::setConnectionCallBack(TcpConnection::ConnectionCallBack cb){
         _connectionCallBack = std::move(cb);
@@ -47,6 +47,6 @@ namespace net{
             _connectionMap.erase(name);
         }   
         //std::cout<<"here is thread: "<<id<<std::endl;
-        std::cout<<name<<" leaves. "<<"total connection: "<<_connectionMap.size()<<std::endl;
+        std::cout<<base::TimeStamp::getNowAsString()<<" : "<<name<<" leaves. "<<"total connection: "<<_connectionMap.size()<<std::endl;
     }
 }

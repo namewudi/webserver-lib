@@ -1,0 +1,4 @@
+
+
+add_executable(httpApplication testApplication.cpp)
+target_link_libraries(httpApplication serverLib)

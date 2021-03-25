@@ -4,12 +4,13 @@
 #include <functional>
 #include <assert.h>
 #include <string.h> //bzero
+#include "acceptor.h"
 namespace net{
     
-    class Acceptor{
+    class AcceptorV4: public Acceptor{
     public:
         using ConnectionCallBack = std::function<void(SocketInfor)>;
-        Acceptor(int port): _listenEventManager(1){
+        void init(int port)override{
             sockaddr_in sin;
             int lfd = socket(AF_INET, SOCK_STREAM, 0);
             _listenerFd = lfd;
@@ -26,14 +27,14 @@ namespace net{
             channel->addToPoller(EPOLLIN);
             channel->setReadCallBack(std::bind(&Acceptor::handleRead, this));
         }
-        void listen();
-        void handleRead();
-        void setConnectionCallBack(ConnectionCallBack);
-        const int fd()const;
-        
-    private:
-        ConnectionCallBack _connectionCallBack;
-        Event _listenEventManager;
-        int _listenerFd;
+        void handleRead(){
+            sockaddr_in cin;
+            socklen_t len = sizeof(cin);
+            int cfd = ::accept(fd(), (sockaddr*)&cin, &len);
+            SocketInfor newClient(cin, cfd);
+            if(_connectionCallBack){
+                _connectionCallBack(newClient);
+            }
+        }
     };
 }

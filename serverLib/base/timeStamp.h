@@ -11,6 +11,9 @@ namespace base{
             tp = std::chrono::system_clock::now(); 
             return *this;
         }
+        static std::string getNowAsString(){
+            return TimeStamp().setNow().toString();
+        }
         void operator += (int second){
             std::chrono::seconds sec(second);
             tp += sec;

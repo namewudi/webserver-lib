@@ -6,7 +6,7 @@
 #include "httpRequestBody.h"
 #include "httpSessionFactory.h"
 #include <memory>
-#include "../../exception/httpException.h"
+#include "httpException.h"
 #include "../utils/processStatus.h"
 namespace net{
     

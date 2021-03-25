@@ -1,5 +1,5 @@
 #pragma once
-#include "./circleBuffer.h"
+#include "circleBuffer.h"
 #include <unistd.h>
 namespace base{
     class CircleReadBuffer: public CircleBuffer{
