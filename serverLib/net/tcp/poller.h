@@ -5,6 +5,7 @@ namespace net{
     class Channel;
     class Poller{
     public:
+        Poller() = default;
         Poller(const Poller&) = delete;
         Poller& operator=(const Poller&) = delete;
         using ChannelList = std::vector<Channel*>;
