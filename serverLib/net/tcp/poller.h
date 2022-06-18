@@ -1,11 +1,12 @@
 #pragma once
-#include <boost/noncopyable.hpp>
 #include <vector>
 #include <sys/epoll.h>
 namespace net{
     class Channel;
     class Poller{
     public:
+        Poller(const Poller&) = delete;
+        Poller& operator=(const Poller&) = delete;
         using ChannelList = std::vector<Channel*>;
         virtual void poll(ChannelList&) = 0;
         virtual bool isInEvent(int) = 0;
