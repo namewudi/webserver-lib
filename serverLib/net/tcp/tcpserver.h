@@ -14,7 +14,7 @@
 namespace net{
     class TcpServer{
     public:
-        TcpServer(int port, int threadNum = 3, int num = 100):  _acceptor(std::make_shared<AcceptorV6>()),
+        TcpServer(int port, int threadNum = 3, int num = 100):  _acceptor(std::make_shared<AcceptorV4>()),
                                                                 _eventManagers(threadNum, num){
             _acceptor->init(port);
             _acceptor->setConnectionCallBack(std::bind(&TcpServer::newConnection, this, std::placeholders::_1));

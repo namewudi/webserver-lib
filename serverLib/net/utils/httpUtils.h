@@ -4,6 +4,7 @@
 #include "charsetConverter.h"
 #include <algorithm>
 #include <unordered_map>
+#include <functional>
 #include "../http/httpException.h"
 #include "../http/httprequest.h"
 #include "processStatus.h"

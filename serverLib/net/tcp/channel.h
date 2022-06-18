@@ -5,16 +5,17 @@
 #include <sys/epoll.h>
 #include <mutex>
 #include "poller.h"
-#include <boost/noncopyable.hpp>
 #include "../../base/buffer.h"
 #include "../../base/circleReadBuffer.h"
 #include "../../base/circleWriteBuffer.h"
 namespace net{
     class Poller;
-    class Channel: private boost::noncopyable{
+    class Channel{
         using EventCallBack = std::function<void()>;
         //using EventNotifier = std::function<void()>;
     public:
+        Channel(const Channel&) = delete;
+        Channel& operator=(const Channel&) = delete;
         Channel(std::shared_ptr<Poller> poller, int bufferSize = 30720) : _owner(poller),
                                                   _unused(1),
                                                   _beingMonitored(0),

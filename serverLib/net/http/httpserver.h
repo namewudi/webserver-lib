@@ -7,11 +7,12 @@
 #include "servlet.h"
 #include "servletManager.h"
 #include <assert.h>
-#include <boost/noncopyable.hpp>
 #include <memory>
 namespace net{
-    class HttpServer: private boost::noncopyable{
+    class HttpServer{
     public:
+        HttpServer(const HttpServer&) = delete;
+        HttpServer& operator=(const HttpServer&) = delete;
         HttpServer(int port, int threadNum = 3, int num = 100): _tcpServer(port, threadNum, num){
             _servletManager = std::make_shared<ServletManager>();
             _servletManager->init();

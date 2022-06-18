@@ -33,4 +33,4 @@ serverLib/tcp
 )
 install(FILES ${HEADERS} DESTINATION include/serverLib)
 
-add_subdirectory(example/httpServer)
+# add_subdirectory(example/httpServer)

@@ -7,10 +7,12 @@
 #include "epollpoller.h"
 #include <thread>
 #include <mutex>
-#include <boost/noncopyable.hpp>
+
 namespace net{
-    class Event : private boost::noncopyable{
+    class Event{
     public:
+        Event(const Event&) = delete;
+        Event& operator=(const Event&) = delete;
         using ChannelList = std::vector<Channel*>;
         Event(int eventNum = 1024): _channels(eventNum),
                                     _activeChannels(eventNum),
